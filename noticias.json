@@ -1,11 +1,56 @@
 {
-  "generated_at": "2026-11-17T19:14:20.991473Z",
+  "generated_at": "2026-11-17T19:21:44.735463Z",
   "status": "ok",
   "sources_ok": 13,
   "sources_total": 13,
-  "new_articles": 365,
+  "new_articles": 81,
   "errors": [],
   "articles": [
+    {
+      "id": "075625a04f3e37d45e3a9a9d",
+      "title": "SpaceX is leasing $47 billion of Nvidia chips like a car — and lenders hold the title",
+      "url": "https://finance.yahoo.com/markets/article/spacex-is-leasing-47-billion-of-nvidia-chips-like-a-car--and-lenders-hold-the-title-192002200.html?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:20:02Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "7278a1da62cc941ca6d62732",
+      "title": "Former Nvidia boss Jensen Huang speaks out about return for first time in wake of scandal that rocked AI industry",
+      "url": "https://www.independent.co.uk/tech/nvidia-jensen-huang-return-ai-artificial-intelligence-b3086611.html?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:15:43Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "a11d007eee96b89ab8d43937",
+      "title": "Update: US Equity Indexes Fall as Technology Leads Sector Declines Ahead of Nvidia's Results",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/us-equity-indexes-fall-technology-191117746.html?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:11:17Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "87bcff14714e282967eb1ba9",
+      "title": "Why Intel Stock Just Dropped",
+      "url": "https://www.fool.com/investing/2026/11/17/why-intel-stock-just-dropped/?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:08:20Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "072e6d6fab7e757c4c7805b0",
+      "title": "Why PicS Stock Cratered Today",
+      "url": "https://www.fool.com/investing/2026/11/17/why-pics-stock-cratered-today/?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:07:22Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
     {
       "id": "851b70b5e124e899c75ecf3d",
       "title": "Nvidia Sold a Quarter of Its Intel Shares and More Than Half Its Nokia Stake. SpaceX Is Now Its Biggest Investment",
@@ -16,6 +61,51 @@
       "collected_at": "2026-11-17T19:14:20.991473Z"
     },
     {
+      "id": "087737fc6333c2c5adb72dd8",
+      "title": "A $2.4 Billion Fund Dumps These 3 Stocks",
+      "url": "https://www.tikr.com/blog/a-2-4-billion-fund-dumps-these-3-stocks-2?ref=yahoofinance&tlnk=yf-261117-fmjpv9fq&.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:05:52Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "aa8e22441a6634805ed2b7fd",
+      "title": "3 AI Infrastructure Stocks to Buy Hand Over Fist if the Market Pulls Back",
+      "url": "https://www.fool.com/investing/2026/11/17/3-ai-infrastructure-stocks-to-buy-hand-over-fist-if-the-market-pulls-back/?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:05:02Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "440b0c7b69c20dd53275013e",
+      "title": "Robinhood Sinks 6% for a Second Day, Circle Down 5%, Affirm Down 5% as Fintech Stocks Slide",
+      "url": "https://www.tikr.com/blog/robinhood-sinks-6-for-a-second-day-circle-down-5-affirm-down-5-as-fintech-stocks-slide?ref=yahoofinance&tlnk=yf-261117-96w843h5&.tsrc=rss",
+      "source": "Yahoo Finance / Índices",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:04:48Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "2bdb42b7e8309f701e3c5144",
+      "title": "Rigetti Sinks 8%, IonQ Down 7% as Quantum Stocks Slide Again Ahead of Nvidia Earnings",
+      "url": "https://www.tikr.com/blog/rigetti-sinks-8-ionq-down-7-as-quantum-stocks-slide-again-ahead-of-nvidia-earnings?ref=yahoofinance&tlnk=yf-261117-vv38wrgc&.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:04:07Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "38e6768e4f31e1aed2975466",
+      "title": "Does Coca-Cola Stock Fit Your Portfolio Risk?",
+      "url": "https://www.trefis.com/stock/ko/articles/625551/does-coca-cola-stock-fit-your-portfolio-risk/2026-11-17?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:01:49Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
       "id": "879af75094c67bdfc51edf4f",
       "title": "Alphabet Stocks Move Lower as Anthropic IPO Filing Shows $121.3 Billion Google Commitment",
       "url": "https://finance.yahoo.com/technology/ai/articles/alphabet-stocks-move-lower-anthropic-190134552.html?.tsrc=rss",
@@ -23,6 +113,24 @@
       "category": "Mercados",
       "published_at": "2026-11-17T19:01:34Z",
       "collected_at": "2026-11-17T19:14:20.991473Z"
+    },
+    {
+      "id": "9bbf31d5ce31ed0834a31076",
+      "title": "Worried About the Tech Sector? Buy This Vanguard ETF for Long-Term Safety and Dividends",
+      "url": "https://www.fool.com/investing/2026/11/17/worried-about-the-tech-sector-buy-this-vanguard-etf-for-long-term-safety-and-dividends/?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:01:02Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
+      "id": "ca5605ba538322ba435c1ee1",
+      "title": "Cathie Wood Says AI Isn't Even in the First Inning Yet of Its Long-Term Technological Revolution, Pointing to Palantir's 123% U.S. Revenue Growth as Evidence the Market Is Underestimating the Trade. Is Her Concentrated AI Bet Still the Right One?",
+      "url": "https://www.fool.com/investing/2026/11/17/cathie-wood-says-ai-is-in-the-first-innings-of-a-long-term-technological-revolution-pointing-to-palantirs-123-us-revenue-growth-as-evidence-the-market-is-underestimating-the-trade-is-her-concentrated-ai-bet-still-the-right-one/?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:01:02Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
     },
     {
       "id": "2d124c1cc8c7f029584ce8b9",
@@ -113,6 +221,15 @@
       "category": "Mercados",
       "published_at": "2026-11-17T18:53:34Z",
       "collected_at": "2026-11-17T19:14:20.991473Z"
+    },
+    {
+      "id": "46b97064607c83db17ec8a17",
+      "title": "Subgobernadora de Banxico señala incertidumbre sobre duración de pausa en tasas de interés - Segundo a Segundo",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNQVdyRFRWN2NsanJHcUJ1bXRXRnhzZ2FoenJ4Qm1LTFQtVm15aDM3X0FxMkowcjA1Ri1yWFRoVGxoUU5jZ1Zkd2tNaVZkRnlLMUhobFVLc3NiUmp2c2c3a1BFSXNaWHBOSkFwUjgwWFFaaDhYVGZrUEw5WXJwczZOQVV2Ny04UGx0ZEY2UURrRXlBN3JEajVyRmJMNHB0aXFXRlAzMENFTGlhQ1B2bjFVU3RmMmZ6VURadWZv?oc=5",
+      "source": "Segundo a Segundo",
+      "category": "México",
+      "published_at": "2026-11-17T18:53:11Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
     },
     {
       "id": "e88f63ef493fddc3520020e4",
@@ -446,6 +563,15 @@
       "category": "Mercados",
       "published_at": "2026-11-17T17:12:00Z",
       "collected_at": "2026-11-17T19:14:20.991473Z"
+    },
+    {
+      "id": "bff277a75335e3d20346526c",
+      "title": "Abandonan siete cadáveres en bolsas negras al borde de una autopista en Nayarit - Quinta Fuerza",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNTkVxczczSFZsSnRUN1JybmJOeS1zeEJGUmRQVENFSHRHV2JxM3c5UVZsMlhLOC1CdHd0UVRpMGcwc3J3MkphdTN3aUJjOUlpU3BXODBIempUQVNZSkluS1NEcWFQVXowUXJVbmk3cHhyT0FmOFR6UEZseVBkSlpjSHpNOUljNDZHMnlkdDlyQ2Y0UDd0LS1jbFFWaw?oc=5",
+      "source": "Quinta Fuerza",
+      "category": "Política",
+      "published_at": "2026-11-17T17:11:52Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
     },
     {
       "id": "354e0bb9cb487c9ef226e1d4",
@@ -1312,6 +1438,15 @@
       "collected_at": "2026-11-17T19:14:20.991473Z"
     },
     {
+      "id": "20c884fb4e32c0915ff23e8c",
+      "title": "“Independencia y rigor técnico, el perfil que debe tener el relevo de Heath en Banxico” - El Economista",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPY1JuTGlfQ2plWmJJZ2c4ek9fWTE4U0xTLTlfYVR1Tnd6ekJsd3phSG9ZQlAySEhBVEFENDB3eUw0OVNvYlU0VGdTLVVOWU9HcHllZDhjRV9MYXVPQmpLQlJSeUFCU1ljRVJTaU43dzExVFcwUXNoV19obE1IZzRNMGdvYW1ITjdTN0Y4ZzllbzdCOUJGVWtYTG5aU1ZLWU1mZEpHYWc3OGlKNnpDSkdYMGZ2TFV4QlJnMjVZZmEtd9IBxAFBVV95cUxQUWdMdzNBdk1QWjR2dWV2QUJzbTZ2U2s3bjVUSjhvVnlOTXhIdlNtTi1CNzUyZ1RmUU96NHM1ZnVVUnZDWGhrdGxiYjY2YjBsR29XRXVqX2N4eGZSb1JraHVvcHQ4aG82eXpQWEZxdHBpXy1BaERhU2VjVzZiNzVKbXpaTjBzeWJSSGZxZnBRYzhGYnR0WUxqcW5tQVRKQ0Z6Mno2MFZZNmUxcHE0UHZfWWFjVlRESlEzUi1mZUtNcGFTQW5x?oc=5",
+      "source": "El Economista",
+      "category": "México",
+      "published_at": "2026-11-17T04:59:29Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
+    },
+    {
       "id": "c98585bacbad0adce2a99b4d",
       "title": "Conflicto en Medio Oriente exige cautela monetaria ante riesgos inflacionarios: Galia Borja - El Economista",
       "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxQZ3FDeWxvME5KcFhPdm9LU1h1dU9PVVJ4eWo3UzBHNUxGUmhDbWFfWFBhQ0o2WDUxZk5VTUpUMmFCRzEtbEVXYWUzVUN0dllyOUVIRmhjRWR4bUh6X3oteGh6cFd6QnIzaVJHcjRDcWtRTkcxUDFadlBXSHlNZVpLclhwSXItR2RFdkRCeTFYTlpDVFcyd2pmOTlBNWw1eXNmUmRDaHVrcEt2bV93dHcwVi1CX2dxTjc0Z2dxcFJEdjVsbjQ2eWJPemU0T0MzNnQ5blUtRl9JdjNKNXVF0gHiAUFVX3lxTE9DSXVOWEVUaTBuMGc5clJzNms3MllLTzR3cGRvSFEycVhrdV84bm94YkZ0MDdMR0RENk1LLTRTelo2VmpCeVhBZjVma01XdUtEbGN4anpFZG13NzNBb0lRMlZFVUttOGE4bHR4Um90My1aTUtITXFoUXczb2dHdlh1TVFLRU5EVThadVR5eXhITHgtd2NZd05CZ3BLTmdMdG5LZ0Y5VS1HZXIteE1XYVJ2QV9CQ3J1azlJR2FHT2Zta2ltOHh3bVZPVFZlSU9lNVZlVHZRWHMzMXJUNW1OZ0s2QlE?oc=5",
@@ -1913,6 +2048,15 @@
       "category": "Mercados",
       "published_at": "2026-11-16T18:20:02Z",
       "collected_at": "2026-11-17T19:14:20.991473Z"
+    },
+    {
+      "id": "06b9d5dbbf30abe813b68514",
+      "title": "Broadcom Stocks Slide 4.76% as Downgrade Keeps AI Financing Fears in Focus - Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPOXZJM2wxSllqVjNqdVlTTkJ1QVhueW5WUGFtTW1pMUFfN1Rlb0JLRTFtZ09sQ0xRdkY4MjNSUzhWTXJ3YUVuRHNGWDFuaHBJOVdZdjVPTjlFMVotZDBDcUJ5ZDRINF94X25mb054Zy1FYVhSVHk1bEVoZkMxWkE3WElQQUwxTWdkZFFlYTdaeERnSFdiWUE?oc=5",
+      "source": "Yahoo Finance",
+      "category": "Mercados",
+      "published_at": "2026-11-16T18:18:29Z",
+      "collected_at": "2026-11-17T19:21:44.735463Z"
     },
     {
       "id": "b3daed24fd3731c214fd51b4",
@@ -2560,150 +2704,6 @@
       "source": "El Economista",
       "category": "México",
       "published_at": "2026-11-16T01:26:40Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "64a1d376531abfc2cbba9a02",
-      "title": "Japan's economy unexpectedly shrinks as inflation squeezes households - Reuters",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQeXFYOEg3cHpDTUFrTU9IRlQyWDlvRGVMVVN3VmxOelY3WnhCREJNdElKcEY5ZWpBSmhoalMzWDdaM0Y5Z0VXbkxVemg3YmdhSUg5UmYybnhFOHhWbVhXdjdoT1BUUGNQUFVtX2o1SkJRSnBJNEdLX081amJyUll6WHFpUk5SaWlkd2JGN0VnRFZKYi1WT1B0NzFUOUVKdkFfcTQ5RmdFeHdvcWI5c2pRaXF6MFBydw?oc=5",
-      "source": "Reuters",
-      "category": "Mercados",
-      "published_at": "2026-11-16T00:13:00Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "b85fde53db435f88fff07144",
-      "title": "Japan's economy contracts annualised 0.1% in July-September - Reuters",
-      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNajN1eGtlbVV6b1ZxTkZMOEY1MGRsM3J1bWpscEhQQ3ZOWnRXZk1aYVQ0Y3dCcmg1RWRkS2l5eFN0YUpCalk2YjI3QjBKb2gyOEx6VlV5cTZVb2MyT29Mc2tmSjB6T29zdV9weEd4U1hHT3lKaE9kZmt6dmpuTHdITFlxbWxhcFBnNlFOdGEzdGRGcDVOMlpfNlFTVzVLSjg?oc=5",
-      "source": "Reuters",
-      "category": "Mercados",
-      "published_at": "2026-11-15T23:59:43Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "ee1eb0cb1d3018cc53cc6d90",
-      "title": "Periódico especializado en economía, finanzas y negocios - El Economista",
-      "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE1YZEhFYk84VzdXenBpaVI5dUFjLTZBQ0xxRXY2Z1Zjcy1mV1gwMC1RcEtaUlBMdEtpbzVwWXUzRVBoNUdFeEZlR3Q0bkRYcEFPR0UzREFvU1RrUVl5RTVQMng2cnBSdVhjMl9tdXhsY1RuZ0xOYlBReU1EVFI?oc=5",
-      "source": "El Economista",
-      "category": "México",
-      "published_at": "2026-11-15T22:54:40Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "da859f208ffec050152cd09a",
-      "title": "Periódico especializado en economía, finanzas y negocios - El Economista",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNZ1U1WEVmRkZoVjlMOVpEOTRIWFRfa3kyR3RTb2d3WEhRd05GeFlMSkNheVoxbk44X2xYeHZzUDViWVgxajBLWXlGODJja21QVElZeXdOcm1DVWlXVU9EZXlTOHY4VUplVEdpNHlnS0JlS0V6V3o5NlNpcm5IV25NLWtBUQ?oc=5",
-      "source": "El Economista",
-      "category": "México",
-      "published_at": "2026-11-15T22:24:47Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "1ec6f73e9d59135f61ae3ed1",
-      "title": "Periódico especializado en economía, finanzas y negocios - El Economista",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rZkJvUnJTTkZlNzBCR3BGSVpsWGpMbUl3RHF2bEJ4QzdiZVl3ZmRsaEs2X1IxMmZqemplNDVEeGtVWElXNXliUDJETUZEQTE1SzNpYm1TeDJHenpPcU9HeTAzVi0yUlNaYkhMSQ?oc=5",
-      "source": "El Economista",
-      "category": "México",
-      "published_at": "2026-11-15T19:23:12Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "1bdabeffa2d447bc96863479",
-      "title": "Bessent calls for ‘dramatic shakeup’ at Nvidia, urges outside CEO",
-      "url": "https://www.cnbc.com/2026/11/15/bessent-nvidia-ceo-lutnick-megaspeed.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-15T18:10:18Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "b020bce244c0ddf9aeace926",
-      "title": "Trump breaks silence about FAA nationwide ground stop, blames Biden administration",
-      "url": "https://www.cnbc.com/2026/11/15/trump-breaks-silence-on-faa-nationwide-ground-stop-blames-biden-.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-15T16:56:40Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "9d03d522e569ea43314bff73",
-      "title": "'Root cause’ of nationwide ground stop is unknown, FAA says",
-      "url": "https://www.cnbc.com/2026/11/14/root-cause-of-nationwide-ground-stop-is-unknown-faa-says.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-14T22:54:47Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "68ca1dfabc472cb2d33a7d59",
-      "title": "Trump doesn’t plan to raise Nvidia, spy issue during China trip: U.S. officials",
-      "url": "https://www.cnbc.com/2026/11/13/trump-nvidia-huang-china.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-14T15:36:47Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "a99179af3f932fcd9983d249",
-      "title": "Berkshire breaks out to record high with fourth-quarter rally reaching 19%",
-      "url": "https://www.cnbc.com/2026/11/14/berkshire-breaks-out-to-record-high-with-fourth-quarter-rally-reaching-19percent.html",
-      "source": "CNBC / Investing",
-      "category": "Mercados",
-      "published_at": "2026-11-14T14:02:39Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "fa7f0b6ab93430e7e9937003",
-      "title": "Nvidia is done with Jensen Huang. The fallout in Washington is just beginning",
-      "url": "https://www.cnbc.com/2026/11/13/nvidia-jensen-huang-washington-congress.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-13T23:54:36Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "711bbe4fe971cbae66865fc5",
-      "title": "What's ahead for AI financing after Nvidia CEO Jensen Huang departs",
-      "url": "https://www.cnbc.com/2026/11/13/nvidia-jensen-huang-resignation-ai-financing.html",
-      "source": "CNBC / Investing",
-      "category": "Mercados",
-      "published_at": "2026-11-13T21:19:04Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "10c8aa208e5a1658b9fb79ff",
-      "title": "Supreme Court agrees to hear Robinhood challenge to IPO information omission lawsuit",
-      "url": "https://www.cnbc.com/2026/11/13/robinhood-supreme-court-ipo-lawsuit.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-13T20:48:13Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "f081b99bba5329504b28fed8",
-      "title": "Hassett denies report he's leaving White House: 'Not true'",
-      "url": "https://www.cnbc.com/2026/11/13/kevin-hassett-white-house-nec.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-13T20:27:47Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "4a64cb80840c03629f0257ac",
-      "title": "A trading strategy to ride out the Nvidia uncertainty and generate income in the process",
-      "url": "https://www.cnbc.com/2026/11/13/a-trading-strategy-to-ride-out-the-nvidia-uncertainty-and-generate-income-in-the-process.html",
-      "source": "CNBC / Investing",
-      "category": "Mercados",
-      "published_at": "2026-11-13T19:30:36Z",
-      "collected_at": "2026-11-17T19:14:20.991473Z"
-    },
-    {
-      "id": "d610c0ab90226dee91732851",
-      "title": "Is a bottom in for the Nasdaq-100? Charts to watch",
-      "url": "https://www.cnbc.com/2026/11/13/is-a-bottom-in-for-the-nasdaq-100-charts-to-watch.html",
-      "source": "CNBC / Investing",
-      "category": "Mercados",
-      "published_at": "2026-11-13T18:00:01Z",
       "collected_at": "2026-11-17T19:14:20.991473Z"
     }
   ]
