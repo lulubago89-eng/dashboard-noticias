@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Dashboard Noticias: titulares económicos, financieros y políticos de México y Estados Unidos.">
+<title>Dashboard Noticias</title>
+<script>
+/* Tema inicial antes de pintar para evitar parpadeo. */
+(function () {
+  var theme = null;
+  try { theme = localStorage.getItem('dn-theme'); } catch (e) {}
+  if (theme !== 'light' && theme !== 'dark') {
+    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<style>
+:root {
+  --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  --bg: #EEF3F8;
+  --surface: #FFFFFF;
+  --surface-2: #F5F8FC;
+  --line: #D6E0EA;
+  --line-2: #E7EDF4;
+  --ink: #0B2545;
+  --ink-2: #425874;
+  --ink-3: #62778F;
+
+  --accent: #0E9F9A;
+  --accent-ink: #0A6F6B;
+  --accent-soft: #DDF3F1;
+  --on-accent: #FFFFFF;
+
+  --warn: #8A5A00;  --warn-bg: #FFF4DC;  --warn-line: #EACB84;
+  --danger: #B3261E; --danger-bg: #FDECEA; --danger-line: #F0B4AF;
+  --info: #1D4F8C;  --info-bg: #E6F0FB;  --info-line: #B9D3F0;
+  --ok: #0B7F5C;
+
+  --c1: #0E9F9A; --c2: #2F6DB5; --c3: #6366C9;
+  --c4: #7C8FA6; --c5: #3FA7C9; --c6: #A57C3B;
+
+  --side-bg: #0B2545;
+  --side-ink: #C5D5E6;
+  --side-strong: #FFFFFF;
+  --side-line: rgba(255, 255, 255, .11);
+  --side-hover: rgba(255, 255, 255, .06);
+  --side-active: rgba(45, 212, 191, .16);
+  --side-accent: #2DD4BF;
+
+  --shadow: 0 1px 2px rgba(11, 37, 69, .06), 0 4px 14px rgba(11, 37, 69, .04);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #06142A;
+  --surface: #0C2240;
+  --surface-2: #0F2848;
+  --line: #1E3C63;
+  --line-2: #173256;
+  --ink: #E7EFF8;
+  --ink-2: #AABCD0;
+  --ink-3: #8299B1;
+
+  --accent: #2DD4BF;
+  --accent-ink: #5EE7D5;
+  --accent-soft: #0E3B48;
+  --on-accent: #032B2E;
+
+  --warn: #F2C46B;  --warn-bg: #2D2410;  --warn-line: #5E4A18;
+  --danger: #FF9A92; --danger-bg: #34171A; --danger-line: #6B2B2F;
+  --info: #8DBBF2;  --info-bg: #102A4A;  --info-line: #24467A;
+  --ok: #4ADE9F;
+
+  --c1: #2DD4BF; --c2: #6AA3EA; --c3: #A0A5F7;
+  --c4: #8DA2BA; --c5: #5CC0E0; --c6: #D2A862;
+
+  --side-bg: #041022;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 4px 14px rgba(0, 0, 0, .22);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.skip {
+  position: absolute; left: 12px; top: -48px; z-index: 100;
+  background: var(--accent); color: var(--on-accent);
+  padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;
+}
+.skip:focus { top: 12px; }
+.ico { display: inline-flex; width: 18px; height: 18px; flex: none; }
+.ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Estructura ---------- */
+.app { display: grid; grid-template-columns: 268px minmax(0, 1fr); min-height: 100vh; }
+
+/* ---------- Menú lateral ---------- */
+.side {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column;
+  background: var(--side-bg); color: var(--side-ink);
+  padding: 22px 14px 18px;
+  z-index: 40;
+}
+.brand { display: flex; align-items: center; gap: 12px; padding: 2px 8px 22px; }
+.brand-mark { width: 38px; height: 38px; flex: none; }
+.brand-name { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--side-strong); line-height: 1.15; }
+.brand-sub { font-size: 12.5px; color: var(--side-ink); opacity: .8; }
+.side-group { margin: 6px 8px 8px; font-size: 12.5px; font-weight: 600; color: var(--side-ink); opacity: .65; }
+.nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
+.nav-item, .tool-item {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 10px 12px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--side-ink);
+  text-align: left; position: relative;
+  transition: background .15s, color .15s;
+}
+.nav-item:hover, .tool-item:hover { background: var(--side-hover); color: var(--side-strong); }
+.nav-item.active { background: var(--side-active); color: var(--side-strong); font-weight: 600; }
+.nav-item.active::before {
+  content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--side-accent);
+}
+.nav-label { flex: 1; min-width: 0; }
+.nav-count {
+  font-size: 12.5px; font-variant-numeric: tabular-nums;
+  padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,.09);
+}
+.nav-item.active .nav-count { background: var(--side-accent); color: #04282B; font-weight: 600; }
+.side-foot { margin-top: auto; padding: 14px 10px 0; border-top: 1px solid var(--side-line); font-size: 12.5px; line-height: 1.45; }
+.side-foot strong { color: var(--side-strong); font-weight: 600; }
+.side-foot p + p { margin-top: 6px; opacity: .75; }
+.scrim { display: none; }
+
+/* ---------- Cabecera ---------- */
+.main { min-width: 0; }
+.top {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 14px 28px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.menu-btn { display: none; }
+.top-title { flex: 1 1 260px; min-width: 0; }
+.top-title h1 { font-family: var(--serif); font-size: 26px; line-height: 1.15; letter-spacing: -.01em; }
+.top-title p { color: var(--ink-3); font-size: 13.5px; margin-top: 2px; }
+.top-tools { display: flex; align-items: center; gap: 10px; flex: 1 1 420px; justify-content: flex-end; }
+.search {
+  position: relative; flex: 1 1 280px; max-width: 460px;
+}
+.search .ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.search input {
+  width: 100%; height: 42px; padding: 0 40px 0 38px;
+  border: 1px solid var(--line); border-radius: 9px;
+  background: var(--surface); color: var(--ink);
+}
+.search input::placeholder { color: var(--ink-3); }
+.search input:focus-visible { outline-offset: 0; border-color: var(--accent); }
+.search-clear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; display: grid; place-items: center;
+  border: 0; border-radius: 6px; background: transparent; color: var(--ink-3);
+}
+.search-clear:hover { background: var(--line-2); color: var(--ink); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 42px; padding: 0 16px; border-radius: 9px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  font-weight: 600; white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-2); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.06); }
+.btn.icon-only { width: 42px; padding: 0; }
+.btn.small { height: 34px; padding: 0 12px; font-size: 13.5px; }
+.btn.is-loading .ico { animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Contenido ---------- */
+.content { padding: 22px 28px 48px; max-width: 1560px; }
+.content > * + * { margin-top: 20px; }
+
+/* Barra de estado de la recopilación */
+.statusbar {
+  display: grid; grid-template-columns: minmax(240px, 1.6fr) repeat(3, minmax(130px, 1fr));
+  background: var(--navy-bg, var(--side-bg)); color: #fff;
+  border-radius: 12px; overflow: hidden; box-shadow: var(--shadow);
+}
+.stat { padding: 14px 20px; border-left: 1px solid rgba(255,255,255,.1); min-width: 0; }
+.stat:first-child { border-left: 0; }
+.stat-label { font-size: 12.5px; color: #A9C0D9; }
+.stat-value { margin-top: 2px; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.stat-sub { font-size: 12.5px; color: #A9C0D9; margin-top: 1px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 7px; margin-left: 10px;
+  padding: 2px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  background: rgba(255,255,255,.12); vertical-align: 2px;
+}
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #9FB4CB; }
+.pill.ok::before { background: #34D399; }
+.pill.partial::before { background: #FBBF24; }
+.pill.error::before { background: #F87171; }
+.pill.pending::before { background: #7DD3FC; }
+
+/* Avisos */
+.banners { display: flex; flex-direction: column; gap: 10px; }
+.banners:empty { display: none; }
+.banner {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 16px; border-radius: 10px; border: 1px solid;
+}
+.banner .ico { margin-top: 2px; }
+.banner-body { flex: 1; min-width: 0; }
+.banner-body strong { display: block; }
+.banner-body p { font-size: 14px; margin-top: 2px; }
+.banner details { margin-top: 8px; font-size: 13.5px; }
+.banner summary { cursor: pointer; font-weight: 600; }
+.banner ul { margin: 6px 0 0; padding-left: 20px; }
+.banner li { overflow-wrap: anywhere; }
+.banner .btn { align-self: center; }
+.banner.danger { background: var(--danger-bg); border-color: var(--danger-line); color: var(--danger); }
+.banner.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn); }
+.banner.info { background: var(--info-bg); border-color: var(--info-line); color: var(--info); }
+.banner .btn { color: var(--ink); }
+
+/* Indicadores */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px; box-shadow: var(--shadow); min-width: 0;
+  border-top: 3px solid var(--accent);
+}
+.kpi:nth-child(2) { border-top-color: var(--c2); }
+.kpi:nth-child(3) { border-top-color: var(--c3); }
+.kpi:nth-child(4) { border-top-color: var(--c5); }
+.kpi:nth-child(5) { border-top-color: var(--c6); }
+.kpi:nth-child(6) { border-top-color: var(--c4); }
+.kpi-label { font-size: 13.5px; color: var(--ink-2); }
+.kpi-value { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.kpi-value.is-text { font-size: 19px; line-height: 1.3; padding: 4px 0 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kpi-sub { font-size: 13px; color: var(--ink-3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Gráficas */
+.charts { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
+.panel {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 18px 20px; box-shadow: var(--shadow); min-width: 0;
+}
+.panel.span-5 { grid-column: span 5; }
+.panel.span-7 { grid-column: span 7; }
+.panel.span-12 { grid-column: span 12; }
+.panel-head { margin-bottom: 14px; }
+.panel-head h2 { font-family: var(--serif); font-size: 18px; line-height: 1.2; }
+.panel-head p { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.note { color: var(--ink-3); font-size: 14px; padding: 18px 0; }
+
+.cats { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 20px; align-items: center; }
+.donut { width: 100%; max-width: 180px; transform: rotate(0deg); }
+.donut-track { stroke: var(--line-2); }
+.donut circle { transition: stroke-dasharray .3s; }
+.donut-n { font-size: 7.4px; font-weight: 700; fill: var(--ink); font-family: var(--sans); }
+.donut-l { font-size: 2.9px; fill: var(--ink-3); font-family: var(--sans); }
+.legend { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.legend-row {
+  display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; gap: 10px; align-items: center;
+  width: 100%; padding: 7px 8px; border: 0; border-radius: 7px; background: transparent; text-align: left;
+}
+.legend-row:hover { background: var(--surface-2); }
+.legend-row[aria-pressed="true"] { background: var(--accent-soft); }
+.swatch { width: 12px; height: 12px; border-radius: 3px; background: var(--c4); }
+.legend-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend-n { font-weight: 600; font-variant-numeric: tabular-nums; }
+.legend-p { color: var(--ink-3); font-size: 13px; width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.bars { display: flex; flex-direction: column; gap: 4px; }
+.bar-row {
+  display: grid; grid-template-columns: minmax(90px, 190px) minmax(0, 1fr) 36px; gap: 12px; align-items: center;
+  width: 100%; padding: 6px 8px; border: 0; border-radius: 7px; background: transparent; text-align: left;
+}
+.bar-row:hover { background: var(--surface-2); }
+.bar-row[aria-pressed="true"] { background: var(--accent-soft); }
+.bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.bar-track { height: 10px; border-radius: 5px; background: var(--line-2); overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 5px; background: var(--accent); }
+.bar-n { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.bars-more { font-size: 13px; color: var(--ink-3); padding: 6px 8px 0; }
+
+.scroll-x { overflow-x: auto; }
+.days-svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.grid-line { stroke: var(--line-2); stroke-width: 1; }
+.axis-text { font-size: 10.5px; fill: var(--ink-3); font-family: var(--sans); }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+.chart-legend span { display: inline-flex; align-items: center; gap: 7px; }
+
+/* Barra de filtros */
+.toolbar {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 18px; box-shadow: var(--shadow);
+}
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.field select, .field input[type="date"] {
+  height: 40px; padding: 0 12px; min-width: 160px;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--ink);
+}
+.field select:focus-visible, .field input:focus-visible { outline-offset: 0; border-color: var(--accent); }
+.toolbar-spacer { flex: 1; }
+.results-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px;
+}
+.results-head h2 { font-family: var(--serif); font-size: 20px; }
+.results-count { font-size: 14px; color: var(--ink-2); }
+.results-note { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+
+/* Titulares */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.card {
+  --cat: var(--c4);
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--cat);
+  border-radius: 10px; padding: 15px 17px 13px; box-shadow: var(--shadow); min-width: 0;
+}
+.card:hover { border-color: var(--cat); }
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ink-2); max-width: 100%; }
+.chip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--cat); flex: none; }
+.card time { font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.card h3 { font-family: var(--serif); font-size: 18px; line-height: 1.32; font-weight: 600; overflow-wrap: anywhere; }
+.card h3 a { text-decoration: none; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.card h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.card-foot {
+  margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line-2);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.src { font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.card-actions { display: flex; align-items: center; gap: 4px; flex: none; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px;
+  border: 0; border-radius: 7px; background: transparent; color: var(--accent-ink);
+  font-size: 13.5px; font-weight: 600; text-decoration: none;
+}
+.link-btn:hover { background: var(--accent-soft); }
+.link-btn .ico { width: 15px; height: 15px; }
+.link-btn.square { width: 32px; padding: 0; justify-content: center; color: var(--ink-3); }
+.no-link { font-size: 13px; color: var(--ink-3); }
+.more-wrap { display: flex; justify-content: center; padding-top: 6px; }
+
+/* Estados vacíos */
+.empty {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 14px;
+  padding: 34px clamp(20px, 4vw, 44px); box-shadow: var(--shadow);
+}
+.empty h2 { font-family: var(--serif); font-size: 24px; line-height: 1.2; }
+.empty > p { margin-top: 8px; color: var(--ink-2); max-width: 66ch; }
+.steps { margin: 18px 0 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 10px; max-width: 70ch; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+.steps li::before {
+  content: counter(step); width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  background: var(--accent-soft); color: var(--accent-ink);
+}
+.steps li span { padding-top: 3px; }
+.steps b { font-weight: 700; }
+.callout {
+  margin-top: 18px; padding: 12px 16px; border-radius: 10px; max-width: 70ch;
+  background: var(--info-bg); border: 1px solid var(--info-line); color: var(--info); font-size: 14px;
+}
+.empty-actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.skeleton { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+.skeleton div { height: 96px; border-radius: 12px; background: var(--line-2); }
+
+/* Diálogo y aviso emergente */
+dialog {
+  width: min(560px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+dialog::backdrop { background: rgba(4, 16, 34, .6); }
+.dialog-in { padding: 24px 26px 22px; }
+.dialog-in h2 { font-family: var(--serif); font-size: 22px; }
+.dialog-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+.toast {
+  position: fixed; left: 50%; bottom: 22px; z-index: 90; transform: translate(-50%, 24px);
+  max-width: min(560px, calc(100vw - 32px)); padding: 12px 18px; border-radius: 10px;
+  background: var(--side-bg); color: #fff; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  border-left: 4px solid var(--side-accent);
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.warn { border-left-color: #FBBF24; }
+.toast.error { border-left-color: #F87171; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+  .panel.span-5, .panel.span-7 { grid-column: span 12; }
+  .statusbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat:nth-child(3) { border-left: 0; }
+  .stat:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.1); }
+}
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side {
+    position: fixed; inset: 0 auto 0 0; width: 280px; max-width: 86vw;
+    transform: translateX(-100%); transition: transform .22s; box-shadow: 8px 0 30px rgba(0,0,0,.35);
+  }
+  .side.open { transform: none; }
+  .scrim.show { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(4, 16, 34, .55); }
+  .menu-btn { display: inline-flex; }
+  .top { padding: 12px 16px; gap: 10px; }
+  .top-title { flex: 1 1 0; }
+  .top-title h1 { font-size: 21px; }
+  .top-title p { display: none; }
+  .top-tools { flex: 1 1 100%; order: 3; }
+  .search { max-width: none; }
+  .content { padding: 16px 16px 40px; }
+}
+@media (max-width: 640px) {
+  .statusbar { grid-template-columns: minmax(0, 1fr); }
+  .stat { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .stat:first-child { border-top: 0; }
+  .cats { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .legend { width: 100%; }
+  .bar-row { grid-template-columns: minmax(70px, 120px) minmax(0, 1fr) 32px; gap: 8px; }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .field, .field select, .field input[type="date"] { width: 100%; }
+  .toolbar-spacer { display: none; }
+  .btn .btn-text-hide { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<div class="app">
+  <aside class="side" id="sidebar" aria-label="Menú lateral">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="10" fill="#133A6B"/>
+        <rect x="9" y="22" width="5" height="9" rx="1.5" fill="#2DD4BF"/>
+        <rect x="17.5" y="15" width="5" height="16" rx="1.5" fill="#2DD4BF"/>
+        <rect x="26" y="8" width="5" height="23" rx="1.5" fill="#FFFFFF"/>
+      </svg>
+      <div>
+        <div class="brand-name">Dashboard Noticias</div>
+        <div class="brand-sub">Economía, finanzas y política</div>
+      </div>
+    </div>
+
+    <div class="side-group" id="navLabel">Secciones</div>
+    <nav class="nav" id="nav" aria-labelledby="navLabel"></nav>
+
+    <div class="side-group">Herramientas</div>
+    <div class="nav">
+      <button type="button" class="tool-item" id="sideExport"><span class="ico" data-icon="download"></span><span class="nav-label">Exportar CSV</span></button>
+      <button type="button" class="tool-item" id="sideHelp"><span class="ico" data-icon="help"></span><span class="nav-label">Cómo traer noticias nuevas</span></button>
+      <button type="button" class="tool-item" id="sideTheme"><span class="ico" data-icon="moon" id="sideThemeIcon"></span><span class="nav-label" id="sideThemeLabel">Tema oscuro</span></button>
+    </div>
+
+    <div class="side-foot">
+      <p><strong>Fuente de datos</strong></p>
+      <p style="opacity:1">noticias.json, solo lectura. Sin claves ni servicios privados.</p>
+      <p>El botón Refresh solo vuelve a leer ese archivo.</p>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="top">
+      <button type="button" class="btn icon-only menu-btn" id="menuBtn" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false"><span class="ico" data-icon="menu"></span></button>
+      <div class="top-title">
+        <h1 id="viewTitle">Resumen general</h1>
+        <p id="viewSub">Titulares económicos, financieros y políticos</p>
+      </div>
+      <div class="top-tools">
+        <div class="search" role="search">
+          <span class="ico" data-icon="search"></span>
+          <input type="search" id="q" placeholder="Buscar en titulares, fuentes y categorías  ( / )" aria-label="Buscar noticias" autocomplete="off">
+          <button type="button" class="search-clear" id="qClear" aria-label="Borrar búsqueda" hidden><span class="ico" data-icon="x"></span></button>
+        </div>
+        <button type="button" class="btn primary" id="refreshBtn" title="Vuelve a leer noticias.json. No ejecuta el workflow ni descarga RSS."><span class="ico" data-icon="refresh"></span><span>Refresh</span></button>
+        <button type="button" class="btn icon-only" id="themeBtn" aria-label="Cambiar a tema oscuro" title="Cambiar tema"><span class="ico" data-icon="moon" id="themeIcon"></span></button>
+      </div>
+    </header>
+
+    <main class="content" id="main" tabindex="-1">
+      <section class="statusbar" id="statusbar" aria-label="Estado de la última recopilación"></section>
+      <div class="banners" id="banners"></div>
+
+      <div id="emptyArea" hidden></div>
+
+      <div id="contentArea" hidden>
+        <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+
+        <section class="charts" aria-label="Distribución temática" style="margin-top:14px">
+          <div class="panel span-5">
+            <div class="panel-head"><h2>Distribución temática</h2><p>Titulares por categoría. Selecciona una para filtrar.</p></div>
+            <div id="chartCats"></div>
+          </div>
+          <div class="panel span-7">
+            <div class="panel-head"><h2>Titulares por fuente</h2><p>Las ocho fuentes con más titulares. Selecciona una para filtrar.</p></div>
+            <div id="chartSources"></div>
+          </div>
+          <div class="panel span-12">
+            <div class="panel-head"><h2>Actividad de los últimos 14 días</h2><p>Titulares por día según su fecha de publicación (o de recopilación si falta), en hora local.</p></div>
+            <div id="chartDays"></div>
+          </div>
+        </section>
+
+        <section class="toolbar" aria-label="Filtros" style="margin-top:20px">
+          <div class="field">
+            <label for="fCategory">Categoría</label>
+            <select id="fCategory"></select>
+          </div>
+          <div class="field">
+            <label for="fSource">Fuente</label>
+            <select id="fSource"></select>
+          </div>
+          <div class="field">
+            <label for="fDate">Fecha</label>
+            <select id="fDate">
+              <option value="all">Todas las fechas</option>
+              <option value="today">Hoy</option>
+              <option value="24h">Últimas 24 horas</option>
+              <option value="7d">Últimos 7 días</option>
+              <option value="30d">Últimos 30 días</option>
+              <option value="custom">Rango personalizado</option>
+            </select>
+          </div>
+          <div class="field" id="fromWrap" hidden>
+            <label for="fFrom">Desde</label>
+            <input type="date" id="fFrom">
+          </div>
+          <div class="field" id="toWrap" hidden>
+            <label for="fTo">Hasta</label>
+            <input type="date" id="fTo">
+          </div>
+          <div class="field">
+            <label for="fSort">Ordenar por</label>
+            <select id="fSort">
+              <option value="recent">Más recientes</option>
+              <option value="oldest">Más antiguos</option>
+              <option value="source">Fuente (A a Z)</option>
+              <option value="title">Título (A a Z)</option>
+            </select>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button type="button" class="btn" id="clearBtn">Limpiar filtros</button>
+          <button type="button" class="btn" id="exportBtn"><span class="ico" data-icon="download"></span><span>Exportar CSV</span></button>
+        </section>
+
+        <section aria-label="Titulares" style="margin-top:20px">
+          <div class="results-head">
+            <h2>Titulares</h2>
+            <p class="results-count" id="resultCount" aria-live="polite"></p>
+          </div>
+          <p class="results-note" id="resultNote" hidden></p>
+          <div id="noResults" hidden></div>
+          <div class="cards" id="cards" style="margin-top:14px"></div>
+          <div class="more-wrap"><button type="button" class="btn" id="moreBtn" hidden>Mostrar más titulares</button></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog id="helpDialog" aria-labelledby="helpTitle">
+  <div class="dialog-in">
+    <h2 id="helpTitle">Cómo traer noticias nuevas</h2>
+    <div id="helpBody"></div>
+    <div class="dialog-actions"><button type="button" class="btn primary" id="helpClose">Entendido</button></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------
+     Constantes y utilidades
+  ------------------------------------------------------------------ */
+  var PAGE_SIZE = 24;
+  var STALE_HOURS = 48;
+  var NS = 'http://www.w3.org/2000/svg';
+  var $ = function (id) { return document.getElementById(id); };
+
+  var nf = new Intl.NumberFormat('es-MX');
+  var collator = new Intl.Collator('es', { sensitivity: 'base' });
+  var dtf = new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  var dayFmt = new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+  var timeFmt = new Intl.DateTimeFormat('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  var monthFmt = new Intl.DateTimeFormat('es-MX', { month: 'short' });
+
+  function fold(s) {
+    return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
+  /* Constructor de nodos DOM. Todo texto entra por textContent / nodos de texto. */
+  function build(ns, tag, props, kids) {
+    var el = ns ? document.createElementNS(ns, tag) : document.createElement(tag);
+    if (props) {
+      Object.keys(props).forEach(function (k) {
+        var v = props[k];
+        if (v == null || v === false) return;
+        if (k === 'text') el.textContent = v;
+        else if (k === 'style') el.style.cssText = v;
+        else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+        else el.setAttribute(k, v === true ? '' : String(v));
+      });
+    }
+    (kids || []).forEach(function (kid) {
+      if (kid == null || kid === false) return;
+      el.appendChild(typeof kid === 'object' && kid.nodeType ? kid : document.createTextNode(String(kid)));
+    });
+    return el;
+  }
+  function h(tag, props) { return build(null, tag, props, Array.prototype.slice.call(arguments, 2)); }
+  function sv(tag, props) { return build(NS, tag, props, Array.prototype.slice.call(arguments, 2)); }
+
+  var ICONS = {
+    refresh: ['M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8', 'M3 3v5h5', 'M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16', 'M16 16h5v5'],
+    search: ['M21 21l-4.3-4.3', 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z'],
+    download: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 10l5 5 5-5', 'M12 15V3'],
+    external: ['M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6', 'M15 3h6v6', 'M10 14L21 3'],
+    copy: ['M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'],
+    sun: ['M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z', 'M12 1v2', 'M12 21v2', 'M4.22 4.22l1.42 1.42', 'M18.36 18.36l1.42 1.42', 'M1 12h2', 'M21 12h2', 'M4.22 19.78l1.42-1.42', 'M18.36 5.64l1.42-1.42'],
+    moon: ['M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'],
+    menu: ['M3 6h18', 'M3 12h18', 'M3 18h18'],
+    help: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3', 'M12 17h.01'],
+    x: ['M18 6L6 18', 'M6 6l12 12'],
+    alert: ['M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z', 'M12 9v4', 'M12 17h.01'],
+    info: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M12 16v-4', 'M12 8h.01'],
+    grid: ['M3 3h7v7H3z', 'M14 3h7v7h-7z', 'M14 14h7v7h-7z', 'M3 14h7v7H3z'],
+    pin: ['M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z', 'M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'],
+    flag: ['M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z', 'M4 22v-7'],
+    trend: ['M23 6l-9.5 9.5-5-5L1 18', 'M17 6h6v6']
+  };
+  function icon(name) {
+    var wrap = h('span', { 'class': 'ico', 'aria-hidden': 'true' });
+    var svg = sv('svg', { viewBox: '0 0 24 24' });
+    (ICONS[name] || []).forEach(function (d) { svg.appendChild(sv('path', { d: d })); });
+    wrap.appendChild(svg);
+    return wrap;
+  }
+  function paintStaticIcons() {
+    document.querySelectorAll('[data-icon]').forEach(function (slot) {
+      var name = slot.getAttribute('data-icon');
+      slot.setAttribute('aria-hidden', 'true');
+      slot.replaceChildren();
+      var svg = sv('svg', { viewBox: '0 0 24 24' });
+      (ICONS[name] || []).forEach(function (d) { svg.appendChild(sv('path', { d: d })); });
+      slot.appendChild(svg);
+    });
+  }
+  function setSlotIcon(id, name) {
+    var slot = $(id);
+    slot.setAttribute('data-icon', name);
+    paintStaticIcons();
+  }
+
+  /* ------------------------------------------------------------------
+     Secciones del menú
+  ------------------------------------------------------------------ */
+  var SECTIONS = [
+    { key: 'all', label: 'Resumen general', icon: 'grid', sub: 'Titulares económicos, financieros y políticos recopilados de tus fuentes',
+      match: function () { return true; } },
+    { key: 'mx', label: 'México', icon: 'pin', sub: 'Economía, finanzas y política en México',
+      match: function (c) { return c === 'mexico'; } },
+    { key: 'us', label: 'Estados Unidos', icon: 'flag', sub: 'Economía, finanzas y política en Estados Unidos',
+      match: function (c) { return c === 'estados unidos' || c === 'eeuu' || c === 'ee.uu.' || c === 'usa' || c === 'ee. uu.'; } },
+    { key: 'mp', label: 'Mercados y Política', icon: 'trend', sub: 'Mercados financieros y política con impacto económico',
+      match: function (c) { return c === 'mercados y politica' || c === 'mercados' || c === 'politica'; } }
+  ];
+
+  /* ------------------------------------------------------------------
+     Estado
+  ------------------------------------------------------------------ */
+  var state = {
+    data: null,          // metadatos del JSON
+    articles: [],        // noticias normalizadas
+    list: [],            // noticias filtradas actuales
+    busy: false,
+    loaded: false,
+    loadError: null,
+    lastRead: null,
+    section: 'all',
+    category: '',
+    source: '',
+    datePreset: 'all',
+    from: '',
+    to: '',
+    q: '',
+    sort: 'recent',
+    visible: PAGE_SIZE,
+    otherColors: new Map()
+  };
+
+  /* ------------------------------------------------------------------
+     Normalización de datos
+  ------------------------------------------------------------------ */
+  function str(v) { return typeof v === 'string' ? v.trim() : (v == null ? '' : String(v).trim()); }
+  function numOrNull(v) {
+    if (v === null || v === undefined || v === '') return null;
+    var n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  function parseTs(v) {
+    if (typeof v !== 'string' || !v.trim()) return NaN;
+    var t = Date.parse(v);
+    return Number.isNaN(t) ? NaN : t;
+  }
+  function safeUrl(v) {
+    try {
+      var u = new URL(String(v));
+      return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : null;
+    } catch (e) { return null; }
+  }
+
+  function normalizeData(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      throw new Error('noticias.json no tiene el formato esperado (se esperaba un objeto).');
+    }
+    var status = ['pending', 'ok', 'partial', 'error'].indexOf(raw.status) >= 0 ? raw.status : 'pending';
+    var meta = {
+      generated_at: typeof raw.generated_at === 'string' && raw.generated_at.trim() ? raw.generated_at.trim() : null,
+      status: status,
+      sources_ok: numOrNull(raw.sources_ok),
+      sources_total: numOrNull(raw.sources_total),
+      new_articles: numOrNull(raw.new_articles),
+      errors: Array.isArray(raw.errors) ? raw.errors.filter(function (e) { return e != null && String(e).trim(); }).map(String) : []
+    };
+    var src = Array.isArray(raw.articles) ? raw.articles : [];
+    var articles = [];
+    src.forEach(function (a, i) {
+      if (!a || typeof a !== 'object' || !str(a.title)) return;
+      var pub = parseTs(a.published_at);
+      var col = parseTs(a.collected_at);
+      var category = str(a.category) || 'Sin categoría';
+      var source = str(a.source) || 'Fuente sin nombre';
+      articles.push({
+        id: a.id != null && str(a.id) ? String(a.id) : 'sin-id-' + i,
+        title: str(a.title),
+        url: safeUrl(a.url),
+        rawUrl: str(a.url),
+        source: source,
+        category: category,
+        catKey: fold(category),
+        pubRaw: typeof a.published_at === 'string' ? a.published_at : '',
+        colRaw: typeof a.collected_at === 'string' ? a.collected_at : '',
+        pub: pub,
+        col: col,
+        hasPub: !Number.isNaN(pub),
+        ts: !Number.isNaN(pub) ? pub : col,
+        search: fold(str(a.title) + ' ' + source + ' ' + category)
+      });
+    });
+    return { meta: meta, articles: articles };
+  }
+
+  /* ------------------------------------------------------------------
+     Fechas y formatos
+  ------------------------------------------------------------------ */
+  function fmtDate(ms) { return Number.isNaN(ms) ? '' : dtf.format(new Date(ms)); }
+  function ago(ms) {
+    if (Number.isNaN(ms)) return null;
+    var diff = Date.now() - ms;
+    if (diff < 60000) return 'hace un momento';
+    var min = Math.floor(diff / 60000);
+    if (min < 60) return 'hace ' + min + ' min';
+    var hr = Math.floor(min / 60);
+    if (hr < 24) return 'hace ' + hr + ' h';
+    var d = Math.floor(hr / 24);
+    if (d < 8) return 'hace ' + d + (d === 1 ? ' día' : ' días');
+    return null;
+  }
+  function plural(n, one, many) { return nf.format(n) + ' ' + (n === 1 ? one : many); }
+
+  /* ------------------------------------------------------------------
+     Colores por categoría
+  ------------------------------------------------------------------ */
+  function catColor(cat) {
+    var key = fold(cat);
+    if (SECTIONS[1].match(key)) return 'var(--c1)';
+    if (SECTIONS[2].match(key)) return 'var(--c2)';
+    if (SECTIONS[3].match(key)) return 'var(--c3)';
+    if (!state.otherColors.has(key)) {
+      state.otherColors.set(key, 'var(--c' + (4 + (state.otherColors.size % 3)) + ')');
+    }
+    return state.otherColors.get(key);
+  }
+
+  /* ------------------------------------------------------------------
+     Carga de datos (único acceso a la red: noticias.json)
+  ------------------------------------------------------------------ */
+  function loadData(manual) {
+    if (state.busy) return Promise.resolve();
+    state.busy = true;
+    setBusy(true);
+    var prevIds = state.loaded ? new Set(state.articles.map(function (a) { return a.id; })) : null;
+
+    return fetch('./noticias.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('El servidor respondió ' + res.status + (res.statusText ? ' (' + res.statusText + ')' : '') + '.');
+        return res.json().catch(function () { throw new Error('noticias.json no contiene JSON válido.'); });
+      })
+      .then(function (raw) {
+        var parsed = normalizeData(raw);
+        state.data = parsed.meta;
+        state.articles = parsed.articles;
+        state.loaded = true;
+        state.loadError = null;
+        state.lastRead = Date.now();
+        state.visible = PAGE_SIZE;
+        rebuildFilterOptions();
+        if (manual) {
+          if (prevIds) {
+            var added = parsed.articles.filter(function (a) { return !prevIds.has(a.id); }).length;
+            if (added > 0) toast('Lectura actualizada: ' + plural(added, 'titular nuevo', 'titulares nuevos') + ' en noticias.json.');
+            else toast('Lectura actualizada. noticias.json no trae titulares nuevos; para recopilar más, ejecuta el workflow en GitHub.', 'warn');
+          } else {
+            toast('Lectura completada.');
+          }
+        }
+      })
+      .catch(function (err) {
+        var msg = err instanceof TypeError
+          ? 'No se pudo acceder al archivo (error de red o del navegador).'
+          : (err && err.message ? err.message : String(err));
+        state.loadError = msg;
+        if (manual) toast('No se pudo leer noticias.json.', 'error');
+      })
+      .then(function () {
+        state.busy = false;
+        setBusy(false);
+        renderAll();
+      });
+  }
+
+  function setBusy(on) {
+    var b = $('refreshBtn');
+    b.disabled = on;
+    b.classList.toggle('is-loading', on);
+    b.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+
+  /* ------------------------------------------------------------------
+     Filtros
+  ------------------------------------------------------------------ */
+  function dateRange() {
+    var now = Date.now();
+    switch (state.datePreset) {
+      case 'today': var d = new Date(); d.setHours(0, 0, 0, 0); return [d.getTime(), null];
+      case '24h': return [now - 864e5, null];
+      case '7d': return [now - 7 * 864e5, null];
+      case '30d': return [now - 30 * 864e5, null];
+      case 'custom':
+        var f = state.from ? new Date(state.from + 'T00:00:00').getTime() : null;
+        var t = state.to ? new Date(state.to + 'T23:59:59.999').getTime() : null;
+        return [Number.isNaN(f) ? null : f, Number.isNaN(t) ? null : t];
+      default: return [null, null];
+    }
+  }
+
+  function getFiltered() {
+    var sec = SECTIONS.filter(function (x) { return x.key === state.section; })[0] || SECTIONS[0];
+    var terms = fold(state.q).split(/\s+/).filter(Boolean);
+    var range = dateRange(), from = range[0], to = range[1];
+    var excluded = 0;
+    var list = state.articles.filter(function (a) {
+      if (!sec.match(a.catKey)) return false;
+      if (state.category && a.category !== state.category) return false;
+      if (state.source && a.source !== state.source) return false;
+      if (terms.length && !terms.every(function (t) { return a.search.indexOf(t) >= 0; })) return false;
+      if (from != null || to != null) {
+        if (Number.isNaN(a.ts)) { excluded++; return false; }
+        if (from != null && a.ts < from) return false;
+        if (to != null && a.ts > to) return false;
+      }
+      return true;
+    });
+    var byTs = function (x, y) {
+      var ax = Number.isNaN(x.ts), ay = Number.isNaN(y.ts);
+      if (ax && ay) return 0;
+      if (ax) return 1;
+      if (ay) return -1;
+      return 0;
+    };
+    list.sort(function (x, y) {
+      switch (state.sort) {
+        case 'oldest': return byTs(x, y) || (x.ts - y.ts);
+        case 'source': return collator.compare(x.source, y.source) || collator.compare(x.title, y.title);
+        case 'title': return collator.compare(x.title, y.title);
+        default: return byTs(x, y) || (y.ts - x.ts);
+      }
+    });
+    return { list: list, excluded: excluded };
+  }
+
+  function hasActiveFilters() {
+    return !!(state.q || state.category || state.source || state.datePreset !== 'all');
+  }
+
+  function rebuildFilterOptions() {
+    var cats = new Map(), sources = new Set();
+    state.articles.forEach(function (a) {
+      cats.set(a.category, (cats.get(a.category) || 0) + 1);
+      sources.add(a.source);
+    });
+    var catList = Array.from(cats.entries()).sort(function (a, b) { return b[1] - a[1] || collator.compare(a[0], b[0]); }).map(function (e) { return e[0]; });
+    var srcList = Array.from(sources).sort(collator.compare);
+
+    var selC = $('fCategory'), selS = $('fSource');
+    selC.replaceChildren(h('option', { value: '', text: 'Todas las categorías' }));
+    catList.forEach(function (c) { selC.appendChild(h('option', { value: c, text: c })); });
+    selS.replaceChildren(h('option', { value: '', text: 'Todas las fuentes' }));
+    srcList.forEach(function (s) { selS.appendChild(h('option', { value: s, text: s })); });
+
+    if (state.category && catList.indexOf(state.category) < 0) state.category = '';
+    if (state.source && srcList.indexOf(state.source) < 0) state.source = '';
+    selC.value = state.category;
+    selS.value = state.source;
+  }
+
+  /* ------------------------------------------------------------------
+     Render general
+  ------------------------------------------------------------------ */
+  function renderAll() {
+    buildNav();
+    renderHeader();
+    renderStatus();
+    renderBanners();
+    renderBody();
+  }
+
+  function renderHeader() {
+    var sec = SECTIONS.filter(function (x) { return x.key === state.section; })[0] || SECTIONS[0];
+    $('viewTitle').textContent = sec.label;
+    $('viewSub').textContent = sec.sub;
+    document.title = (sec.key === 'all' ? '' : sec.label + ' - ') + 'Dashboard Noticias';
+  }
+
+  function buildNav() {
+    var nav = $('nav');
+    nav.replaceChildren();
+    SECTIONS.forEach(function (sec) {
+      var count = state.loaded ? state.articles.filter(function (a) { return sec.match(a.catKey); }).length : null;
+      var active = state.section === sec.key;
+      nav.appendChild(h('button', {
+        type: 'button',
+        'class': 'nav-item' + (active ? ' active' : ''),
+        'aria-current': active ? 'page' : null,
+        'data-key': sec.key,
+        onclick: function () { setSection(sec.key); }
+      }, icon(sec.icon), h('span', { 'class': 'nav-label', text: sec.label }), h('span', { 'class': 'nav-count', text: count == null ? '–' : nf.format(count) })));
+    });
+  }
+
+  function setSection(key) {
+    state.section = key;
+    state.category = '';
+    $('fCategory').value = '';
+    state.visible = PAGE_SIZE;
+    closeSidebar();
+    buildNav();
+    renderHeader();
+    if (state.loaded && state.articles.length) renderResults();
+    $('main').scrollIntoView({ block: 'start' });
+  }
+
+  /* ---------- Barra de estado ---------- */
+  var STATUS_LABEL = { ok: 'Completa', partial: 'Parcial', error: 'Con errores', pending: 'Pendiente' };
+
+  function renderStatus() {
+    var box = $('statusbar');
+    box.replaceChildren();
+    var d = state.data;
+
+    var genValue = 'Sin datos', genSub = state.loadError ? 'No se pudo leer noticias.json' : (state.busy ? 'Leyendo noticias.json…' : '');
+    var pill = null;
+    if (d) {
+      if (d.generated_at) {
+        var t = parseTs(d.generated_at);
+        if (Number.isNaN(t)) { genValue = 'Fecha no válida'; genSub = d.generated_at; }
+        else { genValue = fmtDate(t); genSub = ago(t) || ''; }
+      } else {
+        genValue = 'Aún sin recopilar';
+        genSub = 'generated_at está vacío en noticias.json';
+      }
+      pill = h('span', { 'class': 'pill ' + d.status, text: STATUS_LABEL[d.status] });
+    }
+
+    box.appendChild(h('div', { 'class': 'stat' },
+      h('div', { 'class': 'stat-label', text: 'Última recopilación' }),
+      h('div', { 'class': 'stat-value' }, genValue, pill),
+      h('div', { 'class': 'stat-sub', text: genSub || '\u00a0' })));
+
+    var srcValue = '–', srcSub = 'Fuentes consultadas';
+    if (d && d.sources_total != null) {
+      srcValue = (d.sources_ok != null ? nf.format(d.sources_ok) : '?') + ' de ' + nf.format(d.sources_total);
+      srcSub = 'Fuentes que respondieron';
+    }
+    box.appendChild(h('div', { 'class': 'stat' },
+      h('div', { 'class': 'stat-label', text: 'Fuentes' }),
+      h('div', { 'class': 'stat-value', text: srcValue }),
+      h('div', { 'class': 'stat-sub', text: srcSub })));
+
+    box.appendChild(h('div', { 'class': 'stat' },
+      h('div', { 'class': 'stat-label', text: 'Noticias nuevas' }),
+      h('div', { 'class': 'stat-value', text: d && d.new_articles != null ? nf.format(d.new_articles) : '–' }),
+      h('div', { 'class': 'stat-sub', text: 'En la última recopilación' })));
+
+    box.appendChild(h('div', { 'class': 'stat' },
+      h('div', { 'class': 'stat-label', text: 'Última lectura del archivo' }),
+      h('div', { 'class': 'stat-value', text: state.lastRead ? timeFmt.format(new Date(state.lastRead)) : '–' }),
+      h('div', { 'class': 'stat-sub', text: 'Con Refresh' })));
+  }
+
+  /* ---------- Avisos ---------- */
+  function banner(kind, iconName, title, text, errors, action) {
+    var body = h('div', { 'class': 'banner-body' }, h('strong', { text: title }));
+    if (text) body.appendChild(h('p', { text: text }));
+    if (errors && errors.length) {
+      var MAX = 20;
+      var ul = h('ul');
+      errors.slice(0, MAX).forEach(function (e) { ul.appendChild(h('li', { text: e })); });
+      if (errors.length > MAX) ul.appendChild(h('li', { text: 'y ' + nf.format(errors.length - MAX) + ' más' }));
+      body.appendChild(h('details', null, h('summary', { text: 'Ver ' + plural(errors.length, 'detalle', 'detalles') }), ul));
+    }
+    var el = h('div', { 'class': 'banner ' + kind, role: kind === 'danger' ? 'alert' : 'status' }, icon(iconName), body);
+    if (action) el.appendChild(h('button', { type: 'button', 'class': 'btn small', onclick: action.fn, text: action.label }));
+    return el;
+  }
+
+  function renderBanners() {
+    var box = $('banners');
+    box.replaceChildren();
+    var d = state.data;
+
+    if (state.loadError) {
+      var hint = location.protocol === 'file:'
+        ? ' Estás abriendo index.html directamente desde el disco y el navegador bloquea fetch. Publícalo en GitHub Pages o sírvelo con un servidor local.'
+        : ' Verifica que noticias.json esté publicado junto a index.html.';
+      box.appendChild(banner('danger', 'alert', 'No se pudo leer noticias.json',
+        state.loadError + hint + (d ? ' Se muestran los datos de la lectura anterior.' : ''),
+        null, { label: 'Reintentar', fn: function () { loadData(true); } }));
+    }
+    if (!d) return;
+
+    var ok = d.sources_ok, total = d.sources_total;
+    var ratio = (ok != null && total != null) ? ' Respondieron ' + nf.format(ok) + ' de ' + nf.format(total) + ' fuentes.' : '';
+
+    if (d.status === 'error') {
+      box.appendChild(banner('danger', 'alert', 'La última recopilación terminó con errores',
+        'Los titulares mostrados pueden estar incompletos o desactualizados.' + ratio, d.errors));
+    } else if (d.status === 'partial') {
+      box.appendChild(banner('warn', 'alert', 'Recopilación parcial: faltan fuentes',
+        'Algunas fuentes no respondieron, así que faltan titulares en este tablero.' + ratio, d.errors));
+    } else if (d.errors.length) {
+      box.appendChild(banner('warn', 'info', 'Avisos de la recopilación', 'El archivo incluye mensajes registrados durante la recopilación.', d.errors));
+    }
+
+    if (d.generated_at) {
+      var t = parseTs(d.generated_at);
+      if (!Number.isNaN(t)) {
+        var hours = (Date.now() - t) / 36e5;
+        if (hours > STALE_HOURS) {
+          box.appendChild(banner('warn', 'info', 'Los datos tienen más de ' + Math.floor(hours / 24) + ' días',
+            'Refresh solo vuelve a leer noticias.json. Para traer noticias nuevas hay que ejecutar el workflow en GitHub.',
+            null, { label: 'Ver cómo', fn: openHelp }));
+        }
+      }
+    }
+  }
+
+  /* ---------- Cuerpo ---------- */
+  function stepsList() {
+    var steps = [
+      ['Abre tu repositorio en ', 'GitHub', '.'],
+      ['Entra a la pestaña ', 'Actions', '.'],
+      ['Selecciona el workflow ', 'Actualizar noticias y publicar dashboard', '.'],
+      ['Pulsa ', 'Run workflow', ' y confirma con el botón ', 'Run workflow', '.'],
+      ['Cuando termine, vuelve a esta página y pulsa ', 'Refresh', '.']
+    ];
+    var ol = h('ol', { 'class': 'steps' });
+    steps.forEach(function (parts) {
+      var span = h('span');
+      parts.forEach(function (p, i) { span.appendChild(i % 2 === 1 ? h('b', { text: p }) : document.createTextNode(p)); });
+      ol.appendChild(h('li', null, span));
+    });
+    return ol;
+  }
+  function noteBox() {
+    return h('div', { 'class': 'callout', text: 'Refresh solo vuelve a leer noticias.json. No ejecuta GitHub Actions ni descarga RSS. Si acabas de ejecutar el workflow, la publicación en GitHub Pages puede tardar un momento en reflejar el archivo nuevo.' });
+  }
+
+  function renderBody() {
+    var empty = $('emptyArea'), content = $('contentArea');
+    empty.replaceChildren();
+
+    if (!state.loaded) {
+      if (state.busy || !state.loadError) {
+        empty.hidden = false; content.hidden = true;
+        empty.appendChild(h('div', { 'class': 'empty', role: 'status' },
+          h('h2', { text: 'Leyendo noticias.json…' }),
+          h('p', { text: 'Estamos consultando el archivo de titulares recopilados.' }),
+          h('div', { 'class': 'skeleton', 'aria-hidden': 'true' }, h('div'), h('div'), h('div'))));
+      } else {
+        empty.hidden = false; content.hidden = true;
+        empty.appendChild(h('div', { 'class': 'empty' },
+          h('h2', { text: 'No hay datos para mostrar' }),
+          h('p', { text: 'El tablero necesita noticias.json para mostrar titulares. Revisa el aviso de arriba y vuelve a intentarlo. Si el archivo aún no existe, genera la primera recopilación así:' }),
+          stepsList(), noteBox(),
+          h('div', { 'class': 'empty-actions' }, h('button', { type: 'button', 'class': 'btn primary', onclick: function () { loadData(true); } }, icon('refresh'), h('span', { text: 'Reintentar lectura' })))));
+      }
+      return;
+    }
+
+    if (state.articles.length === 0) {
+      empty.hidden = false; content.hidden = true;
+      var st = state.data.status;
+      var lead = st === 'pending'
+        ? 'La primera recopilación todavía no se ha ejecutado, así que noticias.json no tiene titulares. Este tablero no muestra datos de ejemplo.'
+        : 'La última recopilación no dejó titulares en noticias.json. Este tablero no muestra datos de ejemplo.';
+      empty.appendChild(h('div', { 'class': 'empty' },
+        h('h2', { text: 'Aún no se han recopilado noticias' }),
+        h('p', { text: lead + ' Para traerlas:' }),
+        stepsList(), noteBox(),
+        h('div', { 'class': 'empty-actions' }, h('button', { type: 'button', 'class': 'btn primary', onclick: function () { loadData(true); } }, icon('refresh'), h('span', { text: 'Refresh' })))));
+      return;
+    }
+
+    empty.hidden = true;
+    content.hidden = false;
+    renderResults();
+  }
+
+  /* ---------- Resultados: indicadores, gráficas y tarjetas ---------- */
+  function renderResults() {
+    var res = getFiltered();
+    state.list = res.list;
+    renderKpis(res.list);
+    renderCats(res.list);
+    renderSources(res.list);
+    renderDays(res.list);
+    renderGrid(res.list, res.excluded);
+    $('exportBtn').disabled = res.list.length === 0;
+    $('clearBtn').disabled = !hasActiveFilters();
+    $('qClear').hidden = !state.q;
+  }
+
+  function kpi(label, value, sub, isText, tip) {
+    return h('div', { 'class': 'kpi' },
+      h('div', { 'class': 'kpi-label', text: label }),
+      h('div', { 'class': 'kpi-value' + (isText ? ' is-text' : ''), text: value, title: isText ? (tip || value) : null }),
+      h('div', { 'class': 'kpi-sub', text: sub, title: sub }));
+  }
+
+  function renderKpis(list) {
+    var box = $('kpis');
+    box.replaceChildren();
+    var d = state.data;
+    var total = state.articles.length;
+
+    box.appendChild(kpi('Titulares en la vista', nf.format(list.length), 'de ' + nf.format(total) + ' recopilados'));
+
+    var srcCount = new Map();
+    list.forEach(function (a) { srcCount.set(a.source, (srcCount.get(a.source) || 0) + 1); });
+    var srcSub = (d.sources_ok != null && d.sources_total != null)
+      ? nf.format(d.sources_ok) + ' de ' + nf.format(d.sources_total) + ' fuentes respondieron'
+      : 'Fuentes con titulares en esta vista';
+    box.appendChild(kpi('Fuentes distintas', nf.format(srcCount.size), srcSub));
+
+    var cutoff = Date.now() - 864e5;
+    var last24 = list.filter(function (a) { return !Number.isNaN(a.ts) && a.ts >= cutoff; }).length;
+    box.appendChild(kpi('Últimas 24 horas', nf.format(last24), list.length ? Math.round(last24 / list.length * 100) + '% de la vista' : 'Sin titulares en la vista'));
+
+    var newest = null;
+    list.forEach(function (a) { if (!Number.isNaN(a.ts) && (!newest || a.ts > newest.ts)) newest = a; });
+    if (newest) {
+      box.appendChild(kpi('Titular más reciente', ago(newest.ts) || dayFmt.format(new Date(newest.ts)), newest.source, true, fmtDate(newest.ts)));
+    } else {
+      box.appendChild(kpi('Titular más reciente', 'Sin fecha', 'Ningún titular trae fecha', true));
+    }
+
+    var top = null;
+    srcCount.forEach(function (n, s) { if (!top || n > top.n) top = { s: s, n: n }; });
+    if (top) {
+      box.appendChild(kpi('Fuente principal', top.s, plural(top.n, 'titular', 'titulares') + ' (' + Math.round(top.n / list.length * 100) + '%)', true));
+    } else {
+      box.appendChild(kpi('Fuente principal', 'Sin datos', 'No hay titulares en la vista', true));
+    }
+
+    box.appendChild(kpi('Nuevas en la última recopilación', d.new_articles != null ? nf.format(d.new_articles) : '–', 'Dato informado por noticias.json'));
+  }
+
+  function emptyNote(text) { return h('p', { 'class': 'note', text: text }); }
+
+  function toggleCategory(cat) {
+    state.category = state.category === cat ? '' : cat;
+    $('fCategory').value = state.category;
+    state.visible = PAGE_SIZE;
+    renderResults();
+  }
+  function toggleSource(src) {
+    state.source = state.source === src ? '' : src;
+    $('fSource').value = state.source;
+    state.visible = PAGE_SIZE;
+    renderResults();
+  }
+
+  function renderCats(list) {
+    var box = $('chartCats');
+    box.replaceChildren();
+    if (!list.length) { box.appendChild(emptyNote('No hay titulares en esta vista para graficar.')); return; }
+
+    var counts = new Map();
+    list.forEach(function (a) { counts.set(a.category, (counts.get(a.category) || 0) + 1); });
+    var entries = Array.from(counts.entries()).sort(function (a, b) { return b[1] - a[1] || collator.compare(a[0], b[0]); });
+    var total = list.length;
+
+    var svg = sv('svg', { viewBox: '0 0 42 42', 'class': 'donut', role: 'img', 'aria-label': 'Distribución de titulares por categoría' });
+    svg.appendChild(sv('circle', { cx: 21, cy: 21, r: 15.9155, fill: 'none', 'class': 'donut-track', 'stroke-width': 5 }));
+    var acc = 0;
+    entries.forEach(function (e) {
+      var p = e[1] / total * 100;
+      var seg = sv('circle', {
+        cx: 21, cy: 21, r: 15.9155, fill: 'none', 'stroke-width': 5,
+        'stroke-dasharray': p + ' ' + (100 - p), 'stroke-dashoffset': String(25 - acc),
+        style: 'stroke:' + catColor(e[0])
+      });
+      seg.appendChild(sv('title', { text: e[0] + ': ' + nf.format(e[1]) }));
+      svg.appendChild(seg);
+      acc += p;
+    });
+    svg.appendChild(sv('text', { x: 21, y: 22, 'text-anchor': 'middle', 'class': 'donut-n', text: nf.format(total) }));
+    svg.appendChild(sv('text', { x: 21, y: 27, 'text-anchor': 'middle', 'class': 'donut-l', text: total === 1 ? 'titular' : 'titulares' }));
+
+    var legend = h('div', { 'class': 'legend' });
+    entries.forEach(function (e) {
+      var sw = h('span', { 'class': 'swatch', style: 'background:' + catColor(e[0]) });
+      legend.appendChild(h('button', {
+        type: 'button', 'class': 'legend-row', 'aria-pressed': state.category === e[0] ? 'true' : 'false',
+        title: 'Filtrar por ' + e[0], onclick: function () { toggleCategory(e[0]); }
+      }, sw, h('span', { 'class': 'legend-name', text: e[0] }), h('span', { 'class': 'legend-n', text: nf.format(e[1]) }), h('span', { 'class': 'legend-p', text: Math.round(e[1] / total * 100) + '%' })));
+    });
+    box.appendChild(h('div', { 'class': 'cats' }, svg, legend));
+  }
+
+  function renderSources(list) {
+    var box = $('chartSources');
+    box.replaceChildren();
+    if (!list.length) { box.appendChild(emptyNote('No hay titulares en esta vista para graficar.')); return; }
+    var counts = new Map();
+    list.forEach(function (a) { counts.set(a.source, (counts.get(a.source) || 0) + 1); });
+    var entries = Array.from(counts.entries()).sort(function (a, b) { return b[1] - a[1] || collator.compare(a[0], b[0]); });
+    var shown = entries.slice(0, 8);
+    var max = shown[0][1];
+    var wrap = h('div', { 'class': 'bars' });
+    shown.forEach(function (e) {
+      var fill = h('span', { 'class': 'bar-fill', style: 'width:' + Math.max(3, e[1] / max * 100) + '%' });
+      wrap.appendChild(h('button', {
+        type: 'button', 'class': 'bar-row', 'aria-pressed': state.source === e[0] ? 'true' : 'false',
+        title: 'Filtrar por ' + e[0], onclick: function () { toggleSource(e[0]); }
+      }, h('span', { 'class': 'bar-name', text: e[0] }), h('span', { 'class': 'bar-track' }, fill), h('span', { 'class': 'bar-n', text: nf.format(e[1]) })));
+    });
+    box.appendChild(wrap);
+    if (entries.length > shown.length) {
+      var rest = entries.slice(8).reduce(function (s, e) { return s + e[1]; }, 0);
+      box.appendChild(h('p', { 'class': 'bars-more', text: 'y ' + plural(entries.length - shown.length, 'fuente más', 'fuentes más') + ' con ' + plural(rest, 'titular', 'titulares') }));
+    }
+  }
+
+  function renderDays(list) {
+    var box = $('chartDays');
+    box.replaceChildren();
+    var DAYS = 14;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var keyOf = function (d) { return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); };
+    var days = [];
+    for (var i = DAYS - 1; i >= 0; i--) {
+      var d = new Date(today); d.setDate(d.getDate() - i);
+      days.push({ date: d, key: keyOf(d), cats: new Map(), total: 0 });
+    }
+    var index = new Map(days.map(function (x, n) { return [x.key, n]; }));
+    var inRange = 0, outside = 0;
+    var usedCats = new Set();
+    list.forEach(function (a) {
+      if (Number.isNaN(a.ts)) { outside++; return; }
+      var n = index.get(keyOf(new Date(a.ts)));
+      if (n == null) { outside++; return; }
+      var day = days[n];
+      day.total++; inRange++;
+      day.cats.set(a.category, (day.cats.get(a.category) || 0) + 1);
+      usedCats.add(a.category);
+    });
+    if (!inRange) {
+      box.appendChild(emptyNote(list.length ? 'Ningún titular de esta vista tiene fecha dentro de los últimos 14 días.' : 'No hay titulares en esta vista para graficar.'));
+      return;
+    }
+
+    var max = Math.max.apply(null, days.map(function (x) { return x.total; }));
+    var W = 620, H = 218, L = 32, R = 6, T = 10, B = 36;
+    var plotW = W - L - R, plotH = H - T - B, slot = plotW / DAYS, bw = slot * 0.66;
+    var svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'days-svg', role: 'img',
+      'aria-label': 'Titulares por día en los últimos 14 días: ' + nf.format(inRange) + ' con fecha en el periodo.' });
+
+    var ticks = Array.from(new Set([0, Math.ceil(max / 2), max]));
+    ticks.forEach(function (t) {
+      var y = T + plotH - (t / max) * plotH;
+      svg.appendChild(sv('line', { x1: L, x2: W - R, y1: y, y2: y, 'class': 'grid-line' }));
+      svg.appendChild(sv('text', { x: L - 6, y: y + 3.5, 'text-anchor': 'end', 'class': 'axis-text', text: String(t) }));
+    });
+
+    days.forEach(function (day, n) {
+      var x = L + n * slot + (slot - bw) / 2;
+      var y = T + plotH;
+      var g = sv('g');
+      g.appendChild(sv('title', { text: dayFmt.format(day.date) + ': ' + plural(day.total, 'titular', 'titulares') }));
+      Array.from(day.cats.entries()).sort(function (a, b) { return collator.compare(a[0], b[0]); }).forEach(function (e) {
+        var hh = (e[1] / max) * plotH;
+        y -= hh;
+        g.appendChild(sv('rect', { x: x, y: y, width: bw, height: hh, rx: 1.5, style: 'fill:' + catColor(e[0]) }));
+      });
+      svg.appendChild(g);
+      var cx = x + bw / 2;
+      svg.appendChild(sv('text', { x: cx, y: H - B + 14, 'text-anchor': 'middle', 'class': 'axis-text', text: String(day.date.getDate()) }));
+      if (n === 0 || day.date.getDate() === 1) {
+        svg.appendChild(sv('text', { x: cx, y: H - B + 26, 'text-anchor': 'middle', 'class': 'axis-text', text: monthFmt.format(day.date).replace('.', '') }));
+      }
+    });
+    box.appendChild(h('div', { 'class': 'scroll-x' }, svg));
+
+    var lg = h('div', { 'class': 'chart-legend' });
+    Array.from(usedCats).sort(collator.compare).forEach(function (c) {
+      lg.appendChild(h('span', null, h('span', { 'class': 'swatch', style: 'background:' + catColor(c) }), c));
+    });
+    box.appendChild(lg);
+    if (outside) {
+      box.appendChild(h('p', { 'class': 'note', style: 'padding:8px 0 0', text: plural(outside, 'titular queda', 'titulares quedan') + ' fuera de este periodo o sin fecha.' }));
+    }
+  }
+
+  function renderGrid(list, excluded) {
+    var cards = $('cards'), more = $('moreBtn'), none = $('noResults'), note = $('resultNote');
+    cards.replaceChildren();
+    none.replaceChildren();
+
+    var total = state.articles.length;
+    var shown = Math.min(state.visible, list.length);
+    $('resultCount').textContent = list.length
+      ? 'Mostrando ' + nf.format(shown) + ' de ' + plural(list.length, 'titular', 'titulares') + (list.length !== total ? ' (de ' + nf.format(total) + ' recopilados)' : '')
+      : '0 titulares en esta vista';
+
+    if (excluded > 0) {
+      note.hidden = false;
+      note.textContent = plural(excluded, 'titular sin fecha no se incluye', 'titulares sin fecha no se incluyen') + ' cuando se filtra por fecha.';
+    } else {
+      note.hidden = true;
+      note.textContent = '';
+    }
+
+    if (!list.length) {
+      none.hidden = false;
+      var msg = hasActiveFilters()
+        ? 'Ningún titular coincide con la búsqueda y los filtros actuales. Prueba con otros términos o limpia los filtros.'
+        : 'No hay titulares en esta sección.';
+      var block = h('div', { 'class': 'empty', style: 'padding:26px 28px' }, h('h2', { style: 'font-size:20px', text: 'Sin resultados' }), h('p', { text: msg }));
+      if (hasActiveFilters()) {
+        block.appendChild(h('div', { 'class': 'empty-actions' }, h('button', { type: 'button', 'class': 'btn primary', onclick: clearFilters, text: 'Limpiar filtros' })));
+      }
+      none.appendChild(block);
+      more.hidden = true;
+      return;
+    }
+    none.hidden = true;
+
+    var frag = document.createDocumentFragment();
+    list.slice(0, shown).forEach(function (a) { frag.appendChild(card(a)); });
+    cards.appendChild(frag);
+
+    var remaining = list.length - shown;
+    more.hidden = remaining <= 0;
+    if (remaining > 0) more.textContent = 'Mostrar ' + nf.format(Math.min(PAGE_SIZE, remaining)) + ' más (' + nf.format(remaining) + ' restantes)';
+  }
+
+  function card(a) {
+    var when, whenTitle = '';
+    if (a.hasPub) { when = fmtDate(a.pub); whenTitle = 'Publicada: ' + a.pubRaw; }
+    else if (!Number.isNaN(a.col)) { when = 'Recopilada ' + fmtDate(a.col); whenTitle = 'Sin fecha de publicación. Recopilada: ' + a.colRaw; }
+    else { when = 'Sin fecha'; }
+    var timeEl = h('time', { text: when, title: whenTitle || null, datetime: !Number.isNaN(a.ts) ? new Date(a.ts).toISOString() : null });
+
+    var titleNode = a.url
+      ? h('a', { href: a.url, target: '_blank', rel: 'noopener noreferrer', text: a.title })
+      : h('span', { text: a.title });
+
+    var actions = h('div', { 'class': 'card-actions' });
+    if (a.url) {
+      actions.appendChild(h('a', { 'class': 'link-btn', href: a.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'Abrir original: ' + a.title }, h('span', { text: 'Abrir original' }), icon('external')));
+      actions.appendChild(h('button', { type: 'button', 'class': 'link-btn square', title: 'Copiar enlace', 'aria-label': 'Copiar enlace de: ' + a.title, onclick: function () { copyText(a.url); } }, icon('copy')));
+    } else {
+      actions.appendChild(h('span', { 'class': 'no-link', text: 'Sin enlace válido' }));
+    }
+
+    return h('article', { 'class': 'card', style: '--cat:' + catColor(a.category) },
+      h('div', { 'class': 'card-top' }, h('span', { 'class': 'chip', text: a.category }), timeEl),
+      h('h3', null, titleNode),
+      h('div', { 'class': 'card-foot' }, h('span', { 'class': 'src', text: a.source, title: a.source }), actions));
+  }
+
+  /* ------------------------------------------------------------------
+     Acciones
+  ------------------------------------------------------------------ */
+  function clearFilters() {
+    state.q = ''; state.category = ''; state.source = ''; state.datePreset = 'all'; state.from = ''; state.to = '';
+    $('q').value = ''; $('fCategory').value = ''; $('fSource').value = ''; $('fDate').value = 'all';
+    $('fFrom').value = ''; $('fTo').value = '';
+    $('fromWrap').hidden = true; $('toWrap').hidden = true;
+    state.visible = PAGE_SIZE;
+    if (state.loaded && state.articles.length) renderResults();
+  }
+
+  function csvCell(v) {
+    var s = v == null ? '' : String(v);
+    /* Evita que Excel interprete el texto como fórmula. */
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+
+  function exportCsv() {
+    var list = state.list;
+    if (!list.length) { toast('No hay titulares para exportar con los filtros actuales.', 'warn'); return; }
+    var rows = [['id', 'titulo', 'fuente', 'categoria', 'publicada', 'recopilada', 'url']];
+    list.forEach(function (a) { rows.push([a.id, a.title, a.source, a.category, a.pubRaw, a.colRaw, a.rawUrl]); });
+    var csv = '\ufeff' + rows.map(function (r) { return r.map(csvCell).join(','); }).join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var now = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var name = 'noticias_' + now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + '_' + pad(now.getHours()) + pad(now.getMinutes()) + '.csv';
+    var link = h('a', { href: url, download: name });
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    toast('CSV exportado: ' + plural(list.length, 'titular', 'titulares') + '.');
+  }
+
+  function copyText(text) {
+    var done = function () { toast('Enlace copiado.'); };
+    var fallback = function () {
+      var ta = h('textarea', { style: 'position:fixed;opacity:0;left:-999px', 'aria-hidden': 'true' });
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      ta.remove();
+      if (ok) done(); else toast('No se pudo copiar el enlace.', 'error');
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+  }
+
+  var toastTimer = null;
+  function toast(msg, kind) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (kind ? ' ' + kind : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 4200);
+  }
+
+  /* Tema */
+  function currentTheme() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('dn-theme', theme); } catch (e) {}
+    syncThemeUi();
+  }
+  function syncThemeUi() {
+    var dark = currentTheme() === 'dark';
+    setSlotIcon('themeIcon', dark ? 'sun' : 'moon');
+    setSlotIcon('sideThemeIcon', dark ? 'sun' : 'moon');
+    $('sideThemeLabel').textContent = dark ? 'Tema claro' : 'Tema oscuro';
+    $('themeBtn').setAttribute('aria-label', dark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro');
+  }
+  function toggleTheme() { applyTheme(currentTheme() === 'dark' ? 'light' : 'dark'); }
+
+  /* Menú lateral móvil */
+  function openSidebar() {
+    $('sidebar').classList.add('open');
+    $('scrim').classList.add('show');
+    $('menuBtn').setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar() {
+    $('sidebar').classList.remove('open');
+    $('scrim').classList.remove('show');
+    $('menuBtn').setAttribute('aria-expanded', 'false');
+  }
+
+  /* Diálogo de ayuda */
+  function openHelp() {
+    closeSidebar();
+    var d = $('helpDialog');
+    if (typeof d.showModal === 'function') { if (!d.open) d.showModal(); }
+    else d.setAttribute('open', '');
+  }
+  function closeHelp() {
+    var d = $('helpDialog');
+    if (typeof d.close === 'function') d.close(); else d.removeAttribute('open');
+  }
+
+  /* ------------------------------------------------------------------
+     Eventos
+  ------------------------------------------------------------------ */
+  function wire() {
+    var qTimer = null;
+    $('q').addEventListener('input', function (e) {
+      state.q = e.target.value;
+      $('qClear').hidden = !state.q;
+      clearTimeout(qTimer);
+      qTimer = setTimeout(function () {
+        state.visible = PAGE_SIZE;
+        if (state.loaded && state.articles.length) renderResults();
+      }, 120);
+    });
+    $('q').addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && $('q').value) { e.preventDefault(); $('qClear').click(); }
+    });
+    $('qClear').addEventListener('click', function () {
+      state.q = ''; $('q').value = ''; $('q').focus();
+      state.visible = PAGE_SIZE;
+      if (state.loaded && state.articles.length) renderResults();
+      $('qClear').hidden = true;
+    });
+
+    $('fCategory').addEventListener('change', function (e) { state.category = e.target.value; state.visible = PAGE_SIZE; renderResults(); });
+    $('fSource').addEventListener('change', function (e) { state.source = e.target.value; state.visible = PAGE_SIZE; renderResults(); });
+    $('fSort').addEventListener('change', function (e) { state.sort = e.target.value; state.visible = PAGE_SIZE; renderResults(); });
+    $('fDate').addEventListener('change', function (e) {
+      state.datePreset = e.target.value;
+      var custom = state.datePreset === 'custom';
+      $('fromWrap').hidden = !custom; $('toWrap').hidden = !custom;
+      state.visible = PAGE_SIZE;
+      renderResults();
+    });
+    function onRange() {
+      var f = $('fFrom').value, t = $('fTo').value;
+      if (f && t && f > t) { var tmp = f; f = t; t = tmp; $('fFrom').value = f; $('fTo').value = t; }
+      state.from = f; state.to = t; state.visible = PAGE_SIZE;
+      renderResults();
+    }
+    $('fFrom').addEventListener('change', onRange);
+    $('fTo').addEventListener('change', onRange);
+
+    $('clearBtn').addEventListener('click', clearFilters);
+    $('moreBtn').addEventListener('click', function () { state.visible += PAGE_SIZE; renderGrid(state.list, getFiltered().excluded); });
+    $('exportBtn').addEventListener('click', exportCsv);
+    $('sideExport').addEventListener('click', function () {
+      closeSidebar();
+      if (!state.loaded || !state.articles.length) { toast('Aún no hay titulares para exportar.', 'warn'); return; }
+      exportCsv();
+    });
+    $('sideHelp').addEventListener('click', openHelp);
+    $('helpClose').addEventListener('click', closeHelp);
+    $('helpDialog').addEventListener('click', function (e) { if (e.target === $('helpDialog')) closeHelp(); });
+
+    $('refreshBtn').addEventListener('click', function () { loadData(true); });
+    $('themeBtn').addEventListener('click', toggleTheme);
+    $('sideTheme').addEventListener('click', toggleTheme);
+    $('menuBtn').addEventListener('click', function () { $('sidebar').classList.contains('open') ? closeSidebar() : openSidebar(); });
+    $('scrim').addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeSidebar();
+      var tag = (e.target && e.target.tagName) || '';
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        $('q').focus();
+      }
+    });
+    window.addEventListener('resize', function () { if (window.innerWidth > 900) closeSidebar(); });
+  }
+
+  /* ------------------------------------------------------------------
+     Inicio
+  ------------------------------------------------------------------ */
+  function init() {
+    paintStaticIcons();
+    $('helpBody').appendChild(stepsList());
+    $('helpBody').appendChild(noteBox());
+    syncThemeUi();
+    wire();
+    renderAll();
+    loadData(false);
+    setInterval(renderStatus, 60000);
+  }
+  init();
+})();
+</script>
+</body>
+</html>
